@@ -8,6 +8,7 @@
 namespace LibUserAuthJwt\Authorizer;
 
 use LibJwt\Library\Jwt as _Jwt;
+use LibEvent\Library\Event;
 
 class Jwt implements \LibUser\Iface\Authorizer
 {
@@ -64,6 +65,9 @@ class Jwt implements \LibUser\Iface\Authorizer
         $token = _Jwt::encode($opt);
         if(!$token)
             return null;
+
+        if(module_exists('lib-event'))
+            Event::trigger('user:authorized', $identity);
 
         return [
             'type' => 'bearer',
